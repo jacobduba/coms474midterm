@@ -4,6 +4,9 @@ from numpy.typing import NDArray
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.svm import SVC
 
 df = pd.read_csv('schizophrenia_dataset.csv')
 
@@ -34,7 +37,19 @@ X_test_scaled_unscaled = np.concatenate((X_test_scaled, X_test_unscaled), axis=1
 
 # SVM
 
-# Decision Tree (if need more models)
+svm = SVC(kernel='poly')
+svm.fit(X_train_scaled_unscaled, y_train)
+svm_prediction = svm.predict(X_test_scaled_unscaled)
+svm_accuracy = accuracy_score(y_test, svm_prediction)
+print(f"SVM score: #{svm_accuracy}")
+
+# Decision Tree
+
+dt = DecisionTreeClassifier()
+dt.fit(X_train_scaled_unscaled, y_train)
+dt_prediction = dt.predict(X_test_scaled_unscaled)
+dt_accuracy = accuracy_score(y_test, dt_prediction)
+print(f"Decision Tree score: #{dt_accuracy}")
 
 # k-NN
 knn = KNeighborsClassifier(n_neighbors=5)

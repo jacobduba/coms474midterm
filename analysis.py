@@ -14,9 +14,12 @@ y = df['Diagnosis']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
 
+X_train_to_scale = X_train[scaled_cols]
+X_test_to_scale = X_test[scaled_cols]
+
 scaler = StandardScaler()
-X_train_scaled: NDArray[np.float64] = scaler.fit_transform(X_train[scaled_cols])
-X_test_scaled: NDArray[np.float64] = scaler.transform(X_test[scaled_cols])
+X_train_scaled: NDArray[np.float64] = scaler.fit_transform(X_train_to_scale)
+X_test_scaled: NDArray[np.float64] = scaler.transform(X_test_to_scale)
 
 X_train_unscaled: NDArray[np.float64] = X_train[unscaled_cols].to_numpy()
 X_test_unscaled: NDArray[np.float64] = X_test[unscaled_cols].to_numpy()

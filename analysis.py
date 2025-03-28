@@ -39,4 +39,4 @@ X_test_scaled_unscaled = np.concatenate((X_test_scaled, X_test_unscaled), axis=1
 # k-NN
 knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X_train_scaled_unscaled, y_train)
-print(f"KNN Score: #{knn.score(X_test_scaled_unscaled, y_test}"))
+print(f"KNN Score: #{knn.score(X_test_scaled_unscaled, y_test)}")

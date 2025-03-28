@@ -3,6 +3,7 @@ import numpy as np
 from numpy.typing import NDArray
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
 
 df = pd.read_csv('schizophrenia_dataset.csv')
 
@@ -36,3 +37,6 @@ X_test_scaled_unscaled = np.concatenate((X_test_scaled, X_test_unscaled), axis=1
 # Decision Tree (if need more models)
 
 # k-NN
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_train_scaled_unscaled, y_train)
+print(f"KNN Score: #{knn.score(X_test_scaled_unscaled, y_test}"))

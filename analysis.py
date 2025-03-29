@@ -12,7 +12,7 @@ from sklearn.svm import SVC
 df = pd.read_csv('schizophrenia_dataset.csv')
 
 scaled_cols = ['Age', 'Positive_Symptom_Score', 'Negative_Symptom_Score', 'GAF_Score']
-unscaled_cols = ['Patient_ID', 'Duration_of_Illness', 'Number_of_Hospitalizations', 'Gender', 'Education_Level', 'Marital_Status', 'Income_Level', 'Occupation', 'Place_of_Residence', 'Family_History_of_Schizophrenia', 'Substance_Use', 'Suicide_Attempt', 'Social_Support', 'Stress_Factors', 'Medication_Adherence']
+unscaled_cols = ['Gender', 'Education_Level', 'Marital_Status', 'Income_Level', 'Occupation', 'Place_of_Residence', 'Family_History_of_Schizophrenia', 'Substance_Use', 'Suicide_Attempt', 'Social_Support', 'Stress_Factors', 'Medication_Adherence']
 
 X = df[scaled_cols + unscaled_cols]
 y = df['Diagnosis']
@@ -41,7 +41,6 @@ lr_accuracy = accuracy_score(y_test, lr_prediction)
 print(f"Logistic Regression score: #{lr_accuracy}")
 
 # SVM
-
 svm = SVC(kernel='poly')
 svm.fit(X_train_scaled_unscaled, y_train)
 svm_prediction = svm.predict(X_test_scaled_unscaled)

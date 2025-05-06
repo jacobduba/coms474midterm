@@ -103,11 +103,11 @@ print(f"Recall: {recall}")
 
 # MLP
 mlp = MLPClassifier(
-    activation='relu',
+    activation='tanh',
     solver='adam',
-    hidden_layer_sizes=(64, 32, 16),
+    hidden_layer_sizes=(22, 20, 20),
     random_state=1,
-    alpha=0.001,
+    alpha=0.01,
     early_stopping=True
 )
 mlp.fit(X_train_scaled_unscaled, y_train)

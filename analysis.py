@@ -82,31 +82,32 @@ print(f"Recall: {recall}")
 
 # SVM
 
-# Cross-validation
-Cs = [0.001, 0.01, 0.1, 1]
-scores = list()
-for c in Cs:
-    svm = SVC(kernel='linear', C=c)
-    score = cross_val_score(svm, X_train_scaled_unscaled, y_train, cv=5).mean()
-    print(f"Cross val. SVM (C={c}):", score)
-    scores.append(score)
+for kernel in ['linear', 'poly', 'rbf']:
+    # Cross-validation
+    Cs = [0.001, 0.01, 0.1, 1]
+    scores = list()
+    for c in Cs:
+        svm = SVC(kernel=kernel, C=c)
+        score = cross_val_score(svm, X_train_scaled_unscaled, y_train, cv=5).mean()
+        print(f"Cross val. SVM (C={c}):", score)
+        scores.append(score)
 
-# sns.lineplot(x = Cs, y = scores, marker = 'o')
-# plt.xlabel("C Values")
-# plt.ylabel("Accuracy Score")
-# plt.show()
-c = Cs[scores.index(max(scores))]
-print("Chosen C:", c)
+    # sns.lineplot(x = Cs, y = scores, marker = 'o')
+    # plt.xlabel("C Values")
+    # plt.ylabel("Accuracy Score")
+    # plt.show()
+    c = Cs[scores.index(max(scores))]
+    print("Chosen C:", c)
 
-svm = SVC(kernel='rbf', C=c)
-svm.fit(X_train_scaled_unscaled, y_train)
-svm_prediction = svm.predict(X_test_scaled_unscaled)
-svm_accuracy = accuracy_score(y_test, svm_prediction)
-print(f"SVM accuracy score: #{svm_accuracy}")
-precision = precision_score(y_test, svm_prediction, average='macro')
-print(f"Precision: {precision}")
-recall = recall_score(y_test, svm_prediction, average='macro')
-print(f"Recall: {recall}")
+    svm = SVC(kernel=kernel, C=c)
+    svm.fit(X_train_scaled_unscaled, y_train)
+    svm_prediction = svm.predict(X_test_scaled_unscaled)
+    svm_accuracy = accuracy_score(y_test, svm_prediction)
+    print(f"SVM ({kernel}) accuracy score: {svm_accuracy}")
+    precision = precision_score(y_test, svm_prediction, average='macro')
+    print(f"Precision: {precision}")
+    recall = recall_score(y_test, svm_prediction, average='macro')
+    print(f"Recall: {recall}")
 
 # Decision Tree
 

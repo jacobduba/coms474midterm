@@ -74,7 +74,7 @@ print(f"Recall: {recall}")
 # SVM
 
 # Cross-validation
-Cs = [0.001, 0.01, 0.1, 1, 10]
+Cs = [0.001, 0.01, 0.1, 1]
 scores = list()
 for c in Cs:
     svm = SVC(kernel='linear', C=c)
@@ -184,13 +184,37 @@ for alpha in alphas:
 alpha = alphas[scores.index(max(scores))]
 print("Chosen alpha:", alpha)
 
+batch_sizes = [32, 64, 128, 256, 512, 1024, 2048, 4096]
+scores = list()
+for batch_size in batch_sizes:
+    mlp = MLPClassifier(
+        activation='relu',
+        solver='adam',
+        hidden_layer_sizes=(22, 20, 20),
+        random_state=1,
+        alpha=alpha,
+        early_stopping=True,
+        batch_size=batch_size
+    )
+    score = cross_val_score(mlp, X_train_scaled_unscaled, y_train, cv=5).mean()
+    print(f"Cross val. MLP (batch_size={batch_size}):", score)
+    scores.append(score)
+
+sns.lineplot(x = batch_sizes, y = scores, marker = 'o')
+plt.xlabel("Batch Size")
+plt.ylabel("Accuracy Score")
+plt.show()
+batch_size = batch_sizes[scores.index(max(scores))]
+print("Chosen batch size:", batch_size)
+
 mlp = MLPClassifier(
     activation='relu',
     solver='adam',
     hidden_layer_sizes=(22, 20, 20),
     random_state=1,
     alpha=alpha,
-    early_stopping=True
+    early_stopping=True,
+    batch_size=batch_size,
 )
 mlp.fit(X_train_scaled_unscaled, y_train)
 print(f"MLP Score: {mlp.score(X_test_scaled_unscaled, y_test)}")

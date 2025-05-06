@@ -13,6 +13,10 @@ from sklearn.linear_model import LogisticRegression, Perceptron
 from sklearn.dummy import DummyClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+from sklearn.model_selection import cross_val_score
 
 df = pd.read_csv('schizophrenia_dataset.csv')
 
@@ -49,7 +53,7 @@ dummy_prediction = dummy.predict(X_test_scaled_unscaled)
 dummy_accuracy = accuracy_score(y_test, dummy_prediction)
 print(f"Dummy score: {dummy_accuracy}")
 
-# Logistic Regression
+# Perceptron
 perceptron = Perceptron(max_iter=1000, tol=1e-3, random_state=1)
 perceptron.fit(X_train_scaled_unscaled, y_train)
 perceptron_prediction = perceptron.predict(X_test_scaled_unscaled)
@@ -68,7 +72,24 @@ recall = recall_score(y_test, lr_prediction, average='macro')
 print(f"Recall: {recall}")
 
 # SVM
-svm = SVC(kernel='poly')
+
+# Cross-validation
+Cs = [0.001, 0.01, 0.1, 1, 10]
+scores = list()
+for c in Cs:
+    svm = SVC(kernel='linear', C=c)
+    score = cross_val_score(svm, X_train_scaled_unscaled, y_train, cv=5).mean()
+    print(f"Cross val. SVM (C={c}):", score)
+    scores.append(score)
+
+# sns.lineplot(x = Cs, y = scores, marker = 'o')
+# plt.xlabel("C Values")
+# plt.ylabel("Accuracy Score")
+# plt.show()
+c = Cs[scores.index(max(scores))]
+print("Chosen C:", c)
+
+svm = SVC(kernel='rbf', C=c)
 svm.fit(X_train_scaled_unscaled, y_train)
 svm_prediction = svm.predict(X_test_scaled_unscaled)
 svm_accuracy = accuracy_score(y_test, svm_prediction)
@@ -79,7 +100,24 @@ recall = recall_score(y_test, svm_prediction, average='macro')
 print(f"Recall: {recall}")
 
 # Decision Tree
-dt = DecisionTreeClassifier()
+
+# Cross-validation
+max_depths = list(range(1, 20, 2))
+scores = list()
+for depth in max_depths:
+    dt = DecisionTreeClassifier(max_depth=depth)
+    score = cross_val_score(dt, X_train_scaled_unscaled, y_train, cv=5).mean()
+    print(f"Cross val. Decision Tree (max_depth={depth}):", score)
+    scores.append(score)
+
+# sns.lineplot(x = max_depths, y = scores, marker = 'o')
+# plt.xlabel("Max Depth")
+# plt.ylabel("Accuracy Score")
+# plt.show()
+max_depth = max_depths[scores.index(max(scores))]
+print("Chosen max depth:", max_depth)
+
+dt = DecisionTreeClassifier(max_depth=max_depth)
 dt.fit(X_train_scaled_unscaled, y_train)
 dt_prediction = dt.predict(X_test_scaled_unscaled)
 dt_accuracy = accuracy_score(y_test, dt_prediction)
@@ -90,7 +128,26 @@ recall = recall_score(y_test, dt_prediction, average='macro')
 print(f"Recall: {recall}")
 
 # k-NN
-knn = KNeighborsClassifier(n_neighbors=5)
+
+# Cross-validation
+ks = list(range(1, 50, 10))
+scores = list()
+for n in ks:
+    knn = KNeighborsClassifier(n_neighbors=n)
+    score = cross_val_score(knn, X_train_scaled_unscaled, y_train, cv=5).mean()
+    print(f"Cross val. kNN (n_neighbors={n}):", score)
+    scores.append(score)
+
+# sns.lineplot(x = ks, y = scores, marker = 'o')
+# plt.xlabel("K Values")
+# plt.ylabel("Accuracy Score")
+# plt.show()
+
+k = ks[scores.index(max(scores))]
+print("Chosen k:", k)
+
+knn = KNeighborsClassifier(n_neighbors=k)
+print("Cross val. kNN:", cross_val_score(knn, X_train_scaled_unscaled, y_train, cv=5).mean())
 knn.fit(X_train_scaled_unscaled, y_train)
 knn_prediction = knn.predict(X_test_scaled_unscaled)
 knn_accuracy = accuracy_score(y_test, knn_prediction)
@@ -102,12 +159,37 @@ recall = recall_score(y_test, knn_prediction, average='macro')
 print(f"Recall: {recall}")
 
 # MLP
+
+# Cross-validation
+alphas = [10, 1, 0.1, 0.01, 0.001, 0.0001, 0.00001]
+scores = list()
+for alpha in alphas:
+    mlp = MLPClassifier(
+        activation='relu',
+        solver='adam',
+        hidden_layer_sizes=(22, 20, 20),
+        random_state=1,
+        alpha=alpha,
+        early_stopping=True
+    )
+    score = cross_val_score(mlp, X_train_scaled_unscaled, y_train, cv=5).mean()
+    print(f"Cross val. MLP (alpha={alpha}):", score)
+    scores.append(score)
+
+# sns.lineplot(x = alphas, y = scores, marker = 'o')
+# plt.xlabel("Alpha Values")
+# plt.ylabel("Accuracy Score")
+# plt.show()
+
+alpha = alphas[scores.index(max(scores))]
+print("Chosen alpha:", alpha)
+
 mlp = MLPClassifier(
     activation='relu',
     solver='adam',
-    hidden_layer_sizes=(64, 32, 16),
+    hidden_layer_sizes=(22, 20, 20),
     random_state=1,
-    alpha=0.001,
+    alpha=alpha,
     early_stopping=True
 )
 mlp.fit(X_train_scaled_unscaled, y_train)

@@ -209,17 +209,16 @@ for batch_size in batch_sizes:
     print(f"Cross val. MLP (batch_size={batch_size}):", score)
     scores.append(score)
 
-sns.lineplot(x = batch_sizes, y = scores, marker = 'o')
-plt.xlabel("Batch Size")
-plt.ylabel("Accuracy Score")
-plt.show()
+# sns.lineplot(x = batch_sizes, y = scores, marker = 'o')
+# plt.xlabel("Batch Size")
+# plt.ylabel("Accuracy Score")
+# plt.show()
 batch_size = batch_sizes[scores.index(max(scores))]
 print("Chosen batch size:", batch_size)
 
 mlp = MLPClassifier(
     activation='tanh',
     solver='adam',
-    hidden_layer_sizes=(22, 20, 20),
     hidden_layer_sizes=(22, 20, 20),
     random_state=1,
     alpha=alpha,

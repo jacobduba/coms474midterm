@@ -16,6 +16,7 @@ from sklearn.svm import SVC
 
 df = pd.read_csv('schizophrenia_dataset.csv')
 
+# We mostly trained without exams scores to make our application more useful
 # scaled_cols = ['Age', 'Positive_Symptom_Score', 'Negative_Symptom_Score', 'GAF_Score']
 scaled_cols = ['Age']
 categorical_cols = ['Marital_Status', 'Stress_Factors', 'Occupation']

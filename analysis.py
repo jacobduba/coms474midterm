@@ -20,11 +20,18 @@ from sklearn.model_selection import cross_val_score
 
 df = pd.read_csv('schizophrenia_dataset.csv')
 
-# We mostly trained without exams scores to make our application more useful
+# Including test scores
 # scaled_cols = ['Age', 'Positive_Symptom_Score', 'Negative_Symptom_Score', 'GAF_Score']
-scaled_cols = ['Age']
+# Not including test scores
+# scaled_cols = ['Age']
+# For KNN (with test scores)
+# scaled_cols = ['Age', 'Positive_Symptom_Score', 'Negative_Symptom_Score', 'GAF_Score', 'Gender', 'Education_Level', 'Income_Level', 'Place_of_Residence', 'Family_History_of_Schizophrenia', 'Substance_Use', 'Social_Support', 'Medication_Adherence', 'Suicide_Attempt']
+# For KNN (without test scores)
+scaled_cols = ['Age', 'Gender', 'Education_Level', 'Income_Level', 'Place_of_Residence', 'Family_History_of_Schizophrenia', 'Substance_Use', 'Social_Support', 'Medication_Adherence', 'Suicide_Attempt']
 categorical_cols = ['Marital_Status', 'Stress_Factors', 'Occupation']
-unscaled_cols = ['Gender', 'Education_Level', 'Income_Level', 'Place_of_Residence', 'Family_History_of_Schizophrenia', 'Substance_Use', 'Social_Support', 'Medication_Adherence', 'Suicide_Attempt']
+# unscaled_cols = ['Gender', 'Education_Level', 'Income_Level', 'Place_of_Residence', 'Family_History_of_Schizophrenia', 'Substance_Use', 'Social_Support', 'Medication_Adherence', 'Suicide_Attempt']
+# For k-NN
+unscaled_cols = []
 
 X = df[scaled_cols + categorical_cols + unscaled_cols]
 y = df['Diagnosis']
@@ -140,7 +147,7 @@ print(f"Recall: {recall}")
 # k-NN
 
 # Cross-validation
-ks = list(range(1, 50, 10))
+ks = list(range(1, 100))
 scores = list()
 for n in ks:
     knn = KNeighborsClassifier(n_neighbors=n)
@@ -148,9 +155,10 @@ for n in ks:
     print(f"Cross val. kNN (n_neighbors={n}):", score)
     scores.append(score)
 
-# sns.lineplot(x = ks, y = scores, marker = 'o')
-# plt.xlabel("K Values")
-# plt.ylabel("Accuracy Score")
+sns.lineplot(x = list(range(1, len(ks)+1)), y = scores, marker = 'o')
+plt.xlabel("K Values")
+plt.ylabel("Accuracy Score")
+plt.savefig('knn_accuracy_plot.png')
 # plt.show()
 
 k = ks[scores.index(max(scores))]

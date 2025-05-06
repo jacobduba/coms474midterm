@@ -20,6 +20,7 @@ from sklearn.model_selection import cross_val_score
 
 df = pd.read_csv('schizophrenia_dataset.csv')
 
+# We mostly trained without exams scores to make our application more useful
 # scaled_cols = ['Age', 'Positive_Symptom_Score', 'Negative_Symptom_Score', 'GAF_Score']
 scaled_cols = ['Age']
 categorical_cols = ['Marital_Status', 'Stress_Factors', 'Occupation']
@@ -52,6 +53,10 @@ dummy.fit(X_train_scaled_unscaled, y_train)
 dummy_prediction = dummy.predict(X_test_scaled_unscaled)
 dummy_accuracy = accuracy_score(y_test, dummy_prediction)
 print(f"Dummy score: {dummy_accuracy}")
+precision = precision_score(y_test, dummy_prediction, average='macro')
+print(f"Precision: {precision}")
+recall = recall_score(y_test, dummy_prediction, average='macro')
+print(f"Recall: {recall}")
 
 # Perceptron
 perceptron = Perceptron(max_iter=1000, tol=1e-3, random_state=1)
@@ -59,13 +64,17 @@ perceptron.fit(X_train_scaled_unscaled, y_train)
 perceptron_prediction = perceptron.predict(X_test_scaled_unscaled)
 perceptron_accuracy = accuracy_score(y_test, perceptron_prediction)
 print(f"Perceptron score: {perceptron_accuracy}")
+precision = precision_score(y_test, perceptron_prediction, average='macro')
+print(f"Precision: {precision}")
+recall = recall_score(y_test, perceptron_prediction, average='macro')
+print(f"Recall: {recall}")
 
 # Logistic Regression
 lr = LogisticRegression(max_iter=1000)
 lr.fit(X_train_scaled_unscaled, y_train)
 lr_prediction = lr.predict(X_test_scaled_unscaled)
 lr_accuracy = accuracy_score(y_test, lr_prediction)
-print(f"Logistic Regression accuracy score: #{lr_accuracy}")
+print(f"Logistic Regression accuracy score: {lr_accuracy}")
 precision = precision_score(y_test, lr_prediction, average='macro')
 print(f"Precision: {precision}")
 recall = recall_score(y_test, lr_prediction, average='macro')
@@ -121,7 +130,7 @@ dt = DecisionTreeClassifier(max_depth=max_depth)
 dt.fit(X_train_scaled_unscaled, y_train)
 dt_prediction = dt.predict(X_test_scaled_unscaled)
 dt_accuracy = accuracy_score(y_test, dt_prediction)
-print(f"Decision Tree accuracy score: #{dt_accuracy}")
+print(f"Decision Tree accuracy score: {dt_accuracy}")
 precision = precision_score(y_test, dt_prediction, average='macro')
 print(f"Precision: {precision}")
 recall = recall_score(y_test, dt_prediction, average='macro')
@@ -151,7 +160,7 @@ print("Cross val. kNN:", cross_val_score(knn, X_train_scaled_unscaled, y_train, 
 knn.fit(X_train_scaled_unscaled, y_train)
 knn_prediction = knn.predict(X_test_scaled_unscaled)
 knn_accuracy = accuracy_score(y_test, knn_prediction)
-print(f"KNN accuracy score: #{knn_accuracy}")
+print(f"KNN accuracy score: {knn_accuracy}")
 # print(f"KNN Score: #{knn.score(X_test_scaled_unscaled, y_test)}")
 precision = precision_score(y_test, knn_prediction, average='macro')
 print(f"Precision: {precision}")
@@ -208,8 +217,9 @@ batch_size = batch_sizes[scores.index(max(scores))]
 print("Chosen batch size:", batch_size)
 
 mlp = MLPClassifier(
-    activation='relu',
+    activation='tanh',
     solver='adam',
+    hidden_layer_sizes=(22, 20, 20),
     hidden_layer_sizes=(22, 20, 20),
     random_state=1,
     alpha=alpha,
@@ -217,4 +227,10 @@ mlp = MLPClassifier(
     batch_size=batch_size,
 )
 mlp.fit(X_train_scaled_unscaled, y_train)
-print(f"MLP Score: {mlp.score(X_test_scaled_unscaled, y_test)}")
+mlp_prediction = mlp.predict(X_test_scaled_unscaled)
+mlp_accuracy = accuracy_score(y_test, mlp_prediction)
+print(f"MLP Score: {mlp_accuracy}")
+mlp = precision_score(y_test, mlp_prediction, average='macro')
+print(f"Precision: {precision}")
+recall = recall_score(y_test, mlp_prediction, average='macro')
+print(f"Recall: {recall}")

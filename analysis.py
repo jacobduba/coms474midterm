@@ -77,7 +77,22 @@ recall = recall_score(y_test, perceptron_prediction, average='macro')
 print(f"Recall: {recall}")
 
 # Logistic Regression
-lr = LogisticRegression(max_iter=1000)
+# Cross-validation
+Cs = [0.001, 0.01, 0.1, 1, 10]
+scores = list()
+for c in Cs:
+    lr = LogisticRegression(max_iter=1000, C=c)
+    score = cross_val_score(lr, X_train_scaled_unscaled, y_train, cv=5).mean()
+    print(f"Cross val. Logistic Regression (C={c}):", score)
+    scores.append(score)
+sns.lineplot(x = Cs, y = scores, marker = 'o')
+plt.xlabel("C Values for LR")
+plt.ylabel("Accuracy Score")
+plt.show()
+c = Cs[scores.index(max(scores))]
+print("Chosen C:", c)
+
+lr = LogisticRegression(max_iter=1000, C=c)
 lr.fit(X_train_scaled_unscaled, y_train)
 lr_prediction = lr.predict(X_test_scaled_unscaled)
 lr_accuracy = accuracy_score(y_test, lr_prediction)
@@ -100,7 +115,7 @@ for kernel in ['linear', 'poly', 'rbf']:
         scores.append(score)
 
     # sns.lineplot(x = Cs, y = scores, marker = 'o')
-    # plt.xlabel("C Values")
+    # plt.xlabel("C Values for SVM")
     # plt.ylabel("Accuracy Score")
     # plt.show()
     c = Cs[scores.index(max(scores))]
